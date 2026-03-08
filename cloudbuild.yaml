@@ -1,0 +1,9 @@
+# cloudbuild.yaml - Basit test build
+steps:
+  - name: 'gcr.io/cloud-builders/echo'
+    args: ['Merhaba Genesis! Build başarılı.', 'Tarih:', '$$(date)']
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['version']
+
+timeout: 300s   # 5 dakika
