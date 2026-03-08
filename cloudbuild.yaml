@@ -1,9 +1,11 @@
-# cloudbuild.yaml - Basit test build
+# cloudbuild.yaml - Trigger smoke build (service_account ile uyumlu)
 steps:
-  - name: 'gcr.io/cloud-builders/echo'
-    args: ['Merhaba Genesis! Build başarılı.', 'Tarih:', '$$(date)']
+  - name: gcr.io/cloud-builders/gcloud
+    id: Validate-GCloud
+    args:
+      - version
 
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['version']
+options:
+  logging: CLOUD_LOGGING_ONLY
 
-timeout: 300s   # 5 dakika
+timeout: 300s
