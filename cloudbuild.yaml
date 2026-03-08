@@ -1,9 +1,35 @@
-# cloudbuild.yaml - Trigger smoke build (service_account ile uyumlu)
+# cloudbuild.yaml - Day-6: Build + Cloud Deploy release
 steps:
-  - name: gcr.io/cloud-builders/gcloud
-    id: Validate-GCloud
+  - name: gcr.io/cloud-builders/docker
+    id: Build
     args:
-      - version
+      - build
+      - -t
+      - ${_IMAGE_URI}:${SHORT_SHA}
+      - .
+
+  - name: gcr.io/cloud-builders/docker
+    id: Push
+    args:
+      - push
+      - ${_IMAGE_URI}:${SHORT_SHA}
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: Create-Release
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud deploy releases create rel-${SHORT_SHA} \
+          --delivery-pipeline=${_DELIVERY_PIPELINE} \
+          --region=${_REGION} \
+          --images=app=${_IMAGE_URI}:${SHORT_SHA} \
+          --skaffold-file=skaffold.yaml
+
+substitutions:
+  _REGION: us-central1
+  _DELIVERY_PIPELINE: genesis-core-pipeline
+  _IMAGE_URI: us-central1-docker.pkg.dev/my-project-1572856882821/ruhan-v2/genesis-core
 
 options:
   logging: CLOUD_LOGGING_ONLY
