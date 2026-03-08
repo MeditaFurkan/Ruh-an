@@ -3,6 +3,10 @@ kind: Config
 metadata:
   name: genesis-core
 
+profiles:
+  - name: staging
+  - name: prod
+
 manifests:
   rawYaml:
     - deploy/cloudrun-service.yaml
